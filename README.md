@@ -1,0 +1,1 @@
+# fairshare-vyhodnoceni-kreativy
