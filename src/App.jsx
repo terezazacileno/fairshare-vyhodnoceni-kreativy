@@ -73,7 +73,7 @@ const STATUS_CFG = {
 
 const ROW_METRICS = [
   { key: "results", label: "Výsledky", fmt: v => v ?? "–" },
-  { key: "cpr",     label: "CPR",      fmt: v => v ? v.toFixed(0) + " Kč" : "–" },
+  { key: "cpr",     label: "CPA",      fmt: v => v ? v.toFixed(0) + " Kč" : "–" },
   { key: "ctr",     label: "CTR",      fmt: v => v ? v.toFixed(2) + "%" : "–" },
   { key: "cpc",     label: "CPC",      fmt: v => v ? v.toFixed(0) + " Kč" : "–" },
   { key: "spend",   label: "Spend",    fmt: v => v ? v.toLocaleString("cs") + " Kč" : "–" },
@@ -82,7 +82,7 @@ const ROW_METRICS = [
 const ALL_METRICS = [
   { key: "spend",         label: "Spend",        fmt: v => v?.toLocaleString("cs") + " Kč", group: "Výkonnost" },
   { key: "results",       label: "Výsledky",     fmt: v => v, group: "Výkonnost" },
-  { key: "cpr",           label: "CPR",          fmt: v => v?.toFixed(0) + " Kč", group: "Výkonnost" },
+  { key: "cpr",           label: "CPA",          fmt: v => v?.toFixed(0) + " Kč", group: "Výkonnost" },
   { key: "roas",          label: "ROAS",         fmt: v => v?.toFixed(1) + "×", group: "Výkonnost" },
   { key: "leads",         label: "Leads",        fmt: v => v, group: "Výkonnost" },
   { key: "purchases",     label: "Nákupy",       fmt: v => v, group: "Výkonnost" },
@@ -181,14 +181,14 @@ function AIAnalysis({ ad, allAds, skalovatDo = 300, vypnoutOd = 450 }) {
 
     const prompt = `Jsi expert na Meta Ads pro firmu FairShare (podíly na nemovitostech, spoluvlastnictví). Vyhodnoť tuto kreativu.
 
-Cílové KPI: CPR pod ${skalovatDo} Kč = škálovat, ${skalovatDo}–${vypnoutOd} Kč = udržet, nad ${vypnoutOd} Kč = vypnout
-Průměry účtu: CPR ${avgCpr} Kč | CTR ${avgCtr}% | ROAS ${avgRoas}×
+Cílové KPI: CPA pod ${skalovatDo} Kč = škálovat, ${skalovatDo}–${vypnoutOd} Kč = udržet, nad ${vypnoutOd} Kč = vypnout
+Průměry účtu: CPA ${avgCpr} Kč | CTR ${avgCtr}% | ROAS ${avgRoas}×
 
 Kreativa: ${kreativaInfo}
 Kampaň: ${ad.campaign} | Sestava: ${ad.adset} | Formát: ${ad.format} | Umístění: ${ad.placement}
 Spend: ${ad.spend?.toLocaleString("cs")} Kč | Reach: ${ad.reach?.toLocaleString("cs")} | Impressions: ${ad.impressions?.toLocaleString("cs")} | Frequency: ${ad.frequency?.toFixed(1)}×
 CTR: ${ad.ctr?.toFixed(2)}% | CPC: ${ad.cpc?.toFixed(0)} Kč | CPM: ${ad.cpm?.toFixed(0)} Kč | CVR: ${ad.cvr?.toFixed(1)}%
-ROAS: ${ad.roas?.toFixed(1)}× | CPR: ${ad.cpr?.toFixed(0)} Kč | CPL: ${ad.cost_per_lead?.toFixed(0)} Kč
+ROAS: ${ad.roas?.toFixed(1)}× | CPA: ${ad.cpr?.toFixed(0)} Kč | CPL: ${ad.cost_per_lead?.toFixed(0)} Kč
 Výsledky: ${ad.results} | Leads: ${ad.leads} | Nákupy: ${ad.purchases}
 Video – ThruPlays: ${ad.thruplay?.toLocaleString("cs")} | 25%: ${ad.video_p25?.toLocaleString("cs")} | 50%: ${ad.video_p50?.toLocaleString("cs")} | 75%: ${ad.video_p75?.toLocaleString("cs")} | 100%: ${ad.video_p100?.toLocaleString("cs")}
 
@@ -266,7 +266,7 @@ Vrať POUZE JSON bez markdown:
 }
 
 // Grid template: name | sestava | kampan | spusteni | [metriky x5] | vyhodnoceni | status | meta | drive | chevron
-const GRID = "minmax(220px,3fr) minmax(140px,1.5fr) minmax(160px,1.8fr) 90px repeat(5, minmax(80px,1fr)) 130px 95px 85px 85px 28px";
+const GRID = "minmax(220px,3fr) minmax(140px,1.5fr) minmax(160px,1.8fr) 90px repeat(5, minmax(80px,1fr)) 130px 95px 130px 130px 28px";
 
 function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutOd }) {
   const open = expandedId === ad.id;
@@ -321,13 +321,13 @@ function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutO
 
         {/* Meta odkaz */}
         <div style={{ display: "flex", alignItems: "center" }} onClick={e => e.stopPropagation()}>
-          <IconLink href={metaLink} icon="ti-brand-meta" color="#185FA5" bg="#E6F1FB" label="Meta" />
+          <IconLink href={metaLink} icon="ti-brand-meta" color="#185FA5" bg="#E6F1FB" label="Odkaz na Metu" />
         </div>
 
         {/* Drive odkaz */}
         <div style={{ display: "flex", alignItems: "center" }} onClick={e => e.stopPropagation()}>
           {driveLink
-            ? <IconLink href={driveLink} icon="ti-brand-google-drive" color="#27500A" bg="#EAF3DE" label="Drive" />
+            ? <IconLink href={driveLink} icon="ti-brand-google-drive" color="#27500A" bg="#EAF3DE" label="Odkaz na Drive" />
             : <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>–</span>
           }
         </div>
@@ -375,6 +375,167 @@ function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutO
   );
 }
 
+
+function AccountAnalysis({ ads, skalovatDo, vypnoutOd }) {
+  const [state, setState] = useState("idle");
+  const [result, setResult] = useState(null);
+
+  const run = useCallback(async () => {
+    setState("loading");
+
+    const avgCpa = avg(ads, "cpr").toFixed(0);
+    const avgCtr = avg(ads, "ctr").toFixed(2);
+    const avgRoas = avg(ads, "roas").toFixed(1);
+    const totalSpend = ads.reduce((s, a) => s + (a.spend || 0), 0);
+    const totalResults = ads.reduce((s, a) => s + (a.results || 0), 0);
+
+    const skalovatAds = ads.filter(a => vyhodnoceni(a.cpr, skalovatDo, vypnoutOd) === "Škálovat");
+    const vypnoutAds = ads.filter(a => vyhodnoceni(a.cpr, skalovatDo, vypnoutOd) === "Vypnout");
+    const udrzet = ads.filter(a => vyhodnoceni(a.cpr, skalovatDo, vypnoutOd) === "Udržet");
+
+    const prompt = `Jsi senior Meta Ads stratég pro agenturu Zacíleno, pracuješ s účtem FairShare (podíly na nemovitostech). Analyzuj celý účet a dej konkrétní akční doporučení.
+
+PŘEHLED ÚČTU:
+- Celkový spend: ${totalSpend.toLocaleString("cs")} Kč
+- Celkem kreativ: ${ads.length}
+- Průměrné CPA: ${avgCpa} Kč (cíl: pod ${skalovatDo} Kč)
+- Průměrné CTR: ${avgCtr}%
+- Průměrné ROAS: ${avgRoas}×
+- Celkem výsledků: ${totalResults}
+
+KREATIVY KE ŠKÁLOVÁNÍ (CPA pod ${skalovatDo} Kč):
+${skalovatAds.map(a => `- ${a.name}: CPA ${a.cpr?.toFixed(0)} Kč, CTR ${a.ctr?.toFixed(2)}%, spend ${a.spend?.toLocaleString("cs")} Kč, výsledků ${a.results}`).join("\n") || "Žádné"}
+
+KREATIVY K VYPNUTÍ (CPA nad ${vypnoutOd} Kč):
+${vypnoutAds.map(a => `- ${a.name}: CPA ${a.cpr?.toFixed(0)} Kč, CTR ${a.ctr?.toFixed(2)}%, spend ${a.spend?.toLocaleString("cs")} Kč, výsledků ${a.results}`).join("\n") || "Žádné"}
+
+KREATIVY K UDRŽENÍ (CPA ${skalovatDo}–${vypnoutOd} Kč):
+${udrzet.map(a => `- ${a.name}: CPA ${a.cpr?.toFixed(0)} Kč, CTR ${a.ctr?.toFixed(2)}%, spend ${a.spend?.toLocaleString("cs")} Kč`).join("\n") || "Žádné"}
+
+Vrať POUZE JSON bez markdown:
+{
+  "celkove_hodnoceni": "2-3 věty o celkovém stavu účtu",
+  "hlavni_problemy": ["max 3 konkrétní problémy které táhnou výkon dolů"],
+  "okamzite_akce": [
+    {"akce": "Popis konkrétní akce", "proc": "Důvod proč", "dopad": "Odhadovaný dopad"}
+  ],
+  "vzory_uspesnych": "Co mají společného úspěšné kreativy – hook, téma, formát, cílení?",
+  "vzory_neuspesnych": "Co mají společného neúspěšné kreativy?",
+  "dalsi_testy": ["2-3 konkrétní A/B testy které doporučuješ spustit"],
+  "budget_doporuceni": "Jak přerozdělit budget mezi kreativami – konkrétně"
+}`;
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1500,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || "").join("") || "";
+      setResult(JSON.parse(text.replace(/```json|```/g, "").trim()));
+      setState("done");
+    } catch { setState("error"); }
+  }, [ads, skalovatDo, vypnoutOd]);
+
+  if (state === "idle") return (
+    <button onClick={run} style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 16px", cursor: "pointer", fontSize: 13, fontWeight: 500, background: "#EEEDFE", border: "1px solid #C5C2F5", color: "#3C3489", borderRadius: 8 }}>
+      <i className="ti ti-sparkles" style={{ fontSize: 15, color: "#7F77DD" }} aria-hidden="true" />
+      Analyzovat celý účet ↗
+    </button>
+  );
+
+  if (state === "loading") return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 16px", background: "#EEEDFE", borderRadius: 8, fontSize: 13, color: "#534AB7" }}>
+      <i className="ti ti-loader" style={{ fontSize: 15 }} /> Claude analyzuje účet...
+    </div>
+  );
+
+  if (state === "error") return (
+    <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "9px 16px", background: "#FCEBEB", borderRadius: 8, fontSize: 13, color: "#791F1F" }}>
+      Chyba – nastav Anthropic API klíč na Vercelu.
+      <button onClick={run} style={{ fontSize: 12 }}>Zkusit znovu</button>
+    </div>
+  );
+
+  return (
+    <div style={{ background: "#EEEDFE", border: "1px solid #C5C2F5", borderRadius: 10, padding: "16px", marginTop: 4, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+          <i className="ti ti-sparkles" style={{ fontSize: 15, color: "#7F77DD" }} />
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#3C3489" }}>Analýza účtu</span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={run} style={{ fontSize: 11, padding: "3px 10px" }}>Obnovit</button>
+          <button onClick={() => setState("idle")} style={{ fontSize: 11, padding: "3px 10px" }}>Zavřít</button>
+        </div>
+      </div>
+
+      {/* Celkové hodnocení */}
+      <div style={{ fontSize: 13, color: "#3C3489", lineHeight: 1.6, fontStyle: "italic", borderLeft: "3px solid #7F77DD", paddingLeft: 12 }}>
+        {result.celkove_hodnoceni}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {/* Hlavní problémy */}
+        <div style={{ background: "#FCEBEB", borderRadius: 8, padding: "12px 14px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#A32D2D", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.04em" }}>⚠ Hlavní problémy</div>
+          {result.hlavni_problemy?.map((p, i) => (
+            <div key={i} style={{ fontSize: 12, color: "#791F1F", marginBottom: 5, lineHeight: 1.4 }}>• {p}</div>
+          ))}
+        </div>
+
+        {/* Budget doporučení */}
+        <div style={{ background: "#EAF3DE", borderRadius: 8, padding: "12px 14px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#27500A", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.04em" }}>💰 Budget</div>
+          <div style={{ fontSize: 12, color: "#27500A", lineHeight: 1.5 }}>{result.budget_doporuceni}</div>
+        </div>
+      </div>
+
+      {/* Okamžité akce */}
+      <div style={{ background: "white", borderRadius: 8, padding: "12px 14px" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#1a1a1a", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.04em" }}>⚡ Okamžité akce</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {result.okamzite_akce?.map((a, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, padding: "8px 10px", background: "#f9f9f7", borderRadius: 6 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#7F77DD", flexShrink: 0 }}>{i + 1}.</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 2 }}>{a.akce}</div>
+                <div style={{ fontSize: 11, color: "#6b6b6b" }}>{a.proc} → <strong>{a.dopad}</strong></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        {/* Vzory úspěšných */}
+        <div style={{ background: "white", borderRadius: 8, padding: "12px 14px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#27500A", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em" }}>✓ Co funguje</div>
+          <div style={{ fontSize: 12, color: "#1a1a1a", lineHeight: 1.5 }}>{result.vzory_uspesnych}</div>
+        </div>
+        {/* Vzory neúspěšných */}
+        <div style={{ background: "white", borderRadius: 8, padding: "12px 14px" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#A32D2D", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em" }}>✗ Co nefunguje</div>
+          <div style={{ fontSize: 12, color: "#1a1a1a", lineHeight: 1.5 }}>{result.vzory_neuspesnych}</div>
+        </div>
+      </div>
+
+      {/* Další testy */}
+      <div style={{ background: "white", borderRadius: 8, padding: "12px 14px" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#534AB7", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.04em" }}>🧪 Doporučené A/B testy</div>
+        {result.dalsi_testy?.map((t, i) => (
+          <div key={i} style={{ fontSize: 12, color: "#1a1a1a", marginBottom: 5, lineHeight: 1.4 }}>• {t}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [prahovaSkalovatDo, setPrahovaSkalovatDo] = useState(300);
   const [prahovaVypnoutOd, setPrahovaVypnoutOd] = useState(450);
@@ -404,7 +565,6 @@ export default function App() {
   });
 
   const totalSpend = ads.reduce((s, a) => s + (a.spend || 0), 0);
-  const bestAd = [...ads].filter(a => a.cpr > 0).sort((a, b) => a.cpr - b.cpr)[0] || null;
   const skalovani = ads.filter(a => vyhodnoceni(a.cpr, prahovaSkalovatDo, prahovaVypnoutOd) === "Škálovat").length;
   const vypnout = ads.filter(a => vyhodnoceni(a.cpr, prahovaSkalovatDo, prahovaVypnoutOd) === "Vypnout").length;
 
@@ -449,60 +609,69 @@ export default function App() {
             </div>
             <div style={{ fontSize: 20, fontWeight: 500 }}>Vyhodnocení kreativ</div>
           </div>
-          <button onClick={loadLive} disabled={loading} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", fontSize: 13 }}>
-            <i className="ti ti-refresh" style={{ fontSize: 14 }} aria-hidden="true" />
-            {loading ? "Načítám..." : "Načíst z Meta ↗"}
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <AccountAnalysis ads={ads} skalovatDo={prahovaSkalovatDo} vypnoutOd={prahovaVypnoutOd} />
+            <button onClick={loadLive} disabled={loading} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", fontSize: 13 }}>
+              <i className="ti ti-refresh" style={{ fontSize: 14 }} aria-hidden="true" />
+              {loading ? "Načítám..." : "Načíst z Meta ↗"}
+            </button>
+          </div>
         </div>
 
-        {/* Prahové hodnoty CPA */}
-        <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-            <i className="ti ti-target" style={{ fontSize: 12 }} /> Prahové hodnoty CPA
+        {/* Prahové hodnoty CPA + přehled */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, marginBottom: 16, background: "var(--color-border-tertiary)", borderRadius: 12, overflow: "hidden", border: "1px solid var(--color-border-tertiary)" }}>
+          {/* Škálovat */}
+          <div style={{ background: "#EAF3DE", padding: "14px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <i className="ti ti-trending-up" style={{ fontSize: 13, color: "#27500A" }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#27500A", textTransform: "uppercase", letterSpacing: "0.05em" }}>Škálovat</span>
+              </div>
+              <span style={{ fontSize: 22, fontWeight: 700, color: "#27500A" }}>{skalovani}</span>
+            </div>
+            <div style={{ fontSize: 11, color: "#3B6D11", marginBottom: 6 }}>CPA pod</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+              <input
+                type="number"
+                value={prahovaSkalovatDo}
+                onChange={e => setPrahovaSkalovatDo(Number(e.target.value) || 0)}
+                style={{ width: "80px", fontSize: 18, fontWeight: 700, color: "#27500A", background: "transparent", border: "none", borderBottom: "1.5px solid #B7DCA0", borderRadius: 0, padding: "1px 0", outline: "none", fontFamily: "inherit" }}
+              />
+              <span style={{ fontSize: 12, color: "#3B6D11" }}>Kč</span>
+            </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-            {/* Škálovat */}
-            <div style={{ background: "#EAF3DE", border: "1px solid #B7DCA0", borderRadius: 10, padding: "12px 14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                <i className="ti ti-trending-up" style={{ fontSize: 14, color: "#27500A" }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#27500A", textTransform: "uppercase", letterSpacing: "0.04em" }}>Škálovat</span>
+
+          {/* Udržet */}
+          <div style={{ background: "#E6F1FB", padding: "14px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <i className="ti ti-minus" style={{ fontSize: 13, color: "#0C447C" }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#0C447C", textTransform: "uppercase", letterSpacing: "0.05em" }}>Udržet</span>
               </div>
-              <div style={{ fontSize: 11, color: "#3B6D11", marginBottom: 6 }}>CPR pod</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <input
-                  type="number"
-                  value={prahovaSkalovatDo}
-                  onChange={e => setPrahovaSkalovatDo(Number(e.target.value) || 0)}
-                  style={{ width: "100%", fontSize: 20, fontWeight: 700, color: "#27500A", background: "transparent", border: "none", borderBottom: "2px solid #B7DCA0", borderRadius: 0, padding: "2px 0", outline: "none" }}
-                />
-                <span style={{ fontSize: 13, color: "#3B6D11", flexShrink: 0 }}>Kč</span>
-              </div>
+              <span style={{ fontSize: 22, fontWeight: 700, color: "#0C447C" }}>{ads.length - skalovani - vypnout}</span>
             </div>
-            {/* Udržet */}
-            <div style={{ background: "#E6F1FB", border: "1px solid #A8CEEF", borderRadius: 10, padding: "12px 14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                <i className="ti ti-minus" style={{ fontSize: 14, color: "#0C447C" }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#0C447C", textTransform: "uppercase", letterSpacing: "0.04em" }}>Udržet</span>
+            <div style={{ fontSize: 11, color: "#185FA5", marginBottom: 6 }}>CPA mezi</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#185FA5" }}>{prahovaSkalovatDo} – {prahovaVypnoutOd} Kč</div>
+          </div>
+
+          {/* Vypnout */}
+          <div style={{ background: "#FCEBEB", padding: "14px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <i className="ti ti-trending-down" style={{ fontSize: 13, color: "#791F1F" }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#791F1F", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vypnout</span>
               </div>
-              <div style={{ fontSize: 11, color: "#185FA5", marginBottom: 6 }}>CPR {prahovaSkalovatDo} – {prahovaVypnoutOd} Kč</div>
-              <div style={{ fontSize: 13, color: "#185FA5", fontStyle: "italic" }}>automaticky</div>
+              <span style={{ fontSize: 22, fontWeight: 700, color: "#791F1F" }}>{vypnout}</span>
             </div>
-            {/* Vypnout */}
-            <div style={{ background: "#FCEBEB", border: "1px solid #F0B8B8", borderRadius: 10, padding: "12px 14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-                <i className="ti ti-trending-down" style={{ fontSize: 14, color: "#791F1F" }} />
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#791F1F", textTransform: "uppercase", letterSpacing: "0.04em" }}>Vypnout</span>
-              </div>
-              <div style={{ fontSize: 11, color: "#A32D2D", marginBottom: 6 }}>CPR nad</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <input
-                  type="number"
-                  value={prahovaVypnoutOd}
-                  onChange={e => setPrahovaVypnoutOd(Number(e.target.value) || 0)}
-                  style={{ width: "100%", fontSize: 20, fontWeight: 700, color: "#791F1F", background: "transparent", border: "none", borderBottom: "2px solid #F0B8B8", borderRadius: 0, padding: "2px 0", outline: "none" }}
-                />
-                <span style={{ fontSize: 13, color: "#A32D2D", flexShrink: 0 }}>Kč</span>
-              </div>
+            <div style={{ fontSize: 11, color: "#A32D2D", marginBottom: 6 }}>CPA nad</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
+              <input
+                type="number"
+                value={prahovaVypnoutOd}
+                onChange={e => setPrahovaVypnoutOd(Number(e.target.value) || 0)}
+                style={{ width: "80px", fontSize: 18, fontWeight: 700, color: "#791F1F", background: "transparent", border: "none", borderBottom: "1.5px solid #F0B8B8", borderRadius: 0, padding: "1px 0", outline: "none", fontFamily: "inherit" }}
+              />
+              <span style={{ fontSize: 12, color: "#A32D2D" }}>Kč</span>
             </div>
           </div>
         </div>
@@ -513,34 +682,7 @@ export default function App() {
           </div>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 8, marginBottom: 14 }}>
-          {/* Nejúspěšnější kreativa – kliknutelná */}
-          <div
-            onClick={() => { if (bestAd) { setExpandedId(bestAd.id); setTimeout(() => document.getElementById("row-" + bestAd.id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 50); } }}
-            style={{ background: "#EEEDFE", borderRadius: 8, padding: "10px 14px", cursor: bestAd ? "pointer" : "default", border: "1px solid transparent", transition: "border 0.15s" }}
-            onMouseEnter={e => { if (bestAd) e.currentTarget.style.border = "1px solid #7F77DD"; }}
-            onMouseLeave={e => e.currentTarget.style.border = "1px solid transparent"}
-          >
-            <div style={{ fontSize: 11, color: "#534AB7", marginBottom: 4, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
-              <i className="ti ti-trophy" style={{ fontSize: 13 }} /> Nejúspěšnější kreativa
-            </div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#3C3489", wordBreak: "break-all", lineHeight: 1.4 }}>
-              {bestAd ? bestAd.name : "–"}
-            </div>
-            {bestAd && <div style={{ fontSize: 11, color: "#534AB7", marginTop: 4 }}>CPR: {bestAd.cpr?.toFixed(0)} Kč · {bestAd.results} výsledků · klikni pro detail ↓</div>}
-          </div>
-          <div style={{ background: "#EAF3DE", borderRadius: 8, padding: "10px 14px" }}>
-            <div style={{ fontSize: 11, color: "#3B6D11", marginBottom: 2, fontWeight: 500 }}>Škálovat</div>
-            <div style={{ fontSize: 20, fontWeight: 500, color: "#27500A" }}>{skalovani}</div>
-            <div style={{ fontSize: 11, color: "#3B6D11" }}>{`CPR pod ${prahovaSkalovatDo} Kč`}</div>
-          </div>
-          <div style={{ background: "#FCEBEB", borderRadius: 8, padding: "10px 14px" }}>
-            <div style={{ fontSize: 11, color: "#A32D2D", marginBottom: 2, fontWeight: 500 }}>Vypnout</div>
-            <div style={{ fontSize: 20, fontWeight: 500, color: "#791F1F" }}>{vypnout}</div>
-            <div style={{ fontSize: 11, color: "#A32D2D" }}>{`CPR nad ${prahovaVypnoutOd} Kč`}</div>
-          </div>
 
-        </div>
 
         {/* Filtry – jasně pojmenované */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10, alignItems: "center", rowGap: 6 }}>
@@ -581,8 +723,8 @@ export default function App() {
             {ROW_METRICS.map(m => <div key={m.key} style={{ textAlign: "right" }}><SortBtn k={m.key} label={m.label} /></div>)}
             <div>Vyhodnocení</div>
             <div>Stav</div>
-            <div>Meta</div>
-            <div>Drive</div>
+            <div>Odkaz na Metu</div>
+            <div>Odkaz na Drive</div>
             <div />
           </div>
           {filtered.map(ad => <DetailRow key={ad.id} ad={ad} allAds={ads} expandedId={expandedId} setExpandedId={setExpandedId} skalovatDo={prahovaSkalovatDo} vypnoutOd={prahovaVypnoutOd} />)}
