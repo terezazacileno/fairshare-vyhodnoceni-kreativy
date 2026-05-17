@@ -47,9 +47,9 @@ function vyhodnoceni(cpr, skalovatDo = 300, vypnoutOd = 450) {
 }
 
 const DEMO_ADS = [
-  { id: "ad_001", name: "video_fs_hadka_manychat_04_2026", status: "ACTIVE", start_date: "2026-04-01", campaign: "Konverze – FairShare Q2 2026", adset: "Broad CZ 25-55", format: "Video", placement: "Reels", spend: 3200, impressions: 28000, reach: 18000, clicks: 310, link_clicks: 280, ctr: 1.11, cpc: 10.3, cpm: 114, roas: 4.1, cpr: 267, cvr: 4.2, cost_per_lead: 220, results: 12, leads: 14, purchases: 4, frequency: 1.6, thruplay: 8400, video_p25: 15200, video_p50: 11800, video_p75: 9200, video_p100: 5600 },
-  { id: "ad_002", name: "video_fs_avatarka_fbform_03_2026", status: "ACTIVE", start_date: "2026-03-15", campaign: "Leady – FairShare Q1 2026", adset: "Lookalike 1% CZ", format: "Video", placement: "Facebook Feed", spend: 5800, impressions: 62000, reach: 41000, clicks: 480, link_clicks: 420, ctr: 0.77, cpc: 12.1, cpm: 94, roas: 2.8, cpr: 483, cvr: 2.1, cost_per_lead: 390, results: 12, leads: 15, purchases: 2, frequency: 1.5, thruplay: 14000, video_p25: 28000, video_p50: 19000, video_p75: 13000, video_p100: 7200 },
-  { id: "ad_003", name: "video_fs_testimonial_04_2026", status: "ACTIVE", start_date: "2026-04-03", campaign: "Konverze – FairShare Q2 2026", adset: "Retargeting web", format: "Video", placement: "Facebook Feed, Reels", spend: 4100, impressions: 35000, reach: 22000, clicks: 390, link_clicks: 350, ctr: 1.11, cpc: 10.5, cpm: 117, roas: 3.9, cpr: 293, cvr: 3.8, cost_per_lead: 240, results: 14, leads: 17, purchases: 5, frequency: 1.6, thruplay: 9800, video_p25: 18200, video_p50: 13400, video_p75: 9800, video_p100: 5100 },
+  { id: "ad_001", name: "video_fs_hadka_manychat_04_2026", status: "ACTIVE", start_date: "2026-04-01", campaign: "Konverze – FairShare Q2 2026", adset: "Broad CZ 25-55", format: "Video", placement: "Reels", spend: 3200, impressions: 28000, reach: 18000, clicks: 310, link_clicks: 280, ctr: 1.11, cpc: 10.3, cpm: 114, roas: 4.1, cpr: 267, cvr: 4.2, cost_per_lead: 220, results: 12, leads: 14, purchases: 4, frequency: 1.6, thruplay: 8400, video_p25: 15200, video_p50: 11800, video_p75: 9200, video_p100: 5600, lead_formular: 3, lead_manychat: 7, lead_telefon: 1, lead_fbform: 2, lead_messenger: 1 },
+  { id: "ad_002", name: "video_fs_avatarka_fbform_03_2026", status: "ACTIVE", start_date: "2026-03-15", campaign: "Leady – FairShare Q1 2026", adset: "Lookalike 1% CZ", format: "Video", placement: "Facebook Feed", spend: 5800, impressions: 62000, reach: 41000, clicks: 480, link_clicks: 420, ctr: 0.77, cpc: 12.1, cpm: 94, roas: 2.8, cpr: 483, cvr: 2.1, cost_per_lead: 390, results: 12, leads: 15, purchases: 2, frequency: 1.5, thruplay: 14000, video_p25: 28000, video_p50: 19000, video_p75: 13000, video_p100: 7200, lead_formular: 8, lead_manychat: 2, lead_telefon: 2, lead_fbform: 2, lead_messenger: 1 },
+  { id: "ad_003", name: "video_fs_testimonial_04_2026", status: "ACTIVE", start_date: "2026-04-03", campaign: "Konverze – FairShare Q2 2026", adset: "Retargeting web", format: "Video", placement: "Facebook Feed, Reels", spend: 4100, impressions: 35000, reach: 22000, clicks: 390, link_clicks: 350, ctr: 1.11, cpc: 10.5, cpm: 117, roas: 3.9, cpr: 293, cvr: 3.8, cost_per_lead: 240, results: 14, leads: 17, purchases: 5, frequency: 1.6, thruplay: 9800, video_p25: 18200, video_p50: 13400, video_p75: 9800, video_p100: 5100, lead_formular: 5, lead_manychat: 4, lead_telefon: 3, lead_fbform: 3, lead_messenger: 2 },
   { id: "ad_004", name: "banner_fs_sleva33_03_2026", status: "PAUSED", start_date: "2026-03-01", campaign: "Konverze – FairShare Q1 2026", adset: "Zájemci bydlení CZ", format: "Banner", placement: "Facebook Feed", spend: 2100, impressions: 41000, reach: 31000, clicks: 168, link_clicks: 140, ctr: 0.41, cpc: 12.5, cpm: 51, roas: 0.8, cpr: 1050, cvr: 0.5, cost_per_lead: 890, results: 2, leads: 2, purchases: 0, frequency: 1.3, thruplay: 0, video_p25: 0, video_p50: 0, video_p75: 0, video_p100: 0 },
   { id: "ad_005", name: "video_fs_problem_solution_04_2026", status: "ACTIVE", start_date: "2026-04-10", campaign: "Konverze – FairShare Q2 2026", adset: "Broad CZ 25-65", format: "Video", placement: "Reels", spend: 6200, impressions: 54000, reach: 35000, clicks: 648, link_clicks: 590, ctr: 1.2, cpc: 9.6, cpm: 115, roas: 5.2, cpr: 211, cvr: 5.1, cost_per_lead: 175, results: 29, leads: 35, purchases: 12, frequency: 1.5, thruplay: 18200, video_p25: 29000, video_p50: 22000, video_p75: 16000, video_p100: 9400 },
   { id: "ad_006", name: "carousel_fs_produkty_02_2026", status: "PAUSED", start_date: "2026-02-10", campaign: "Awareness – FairShare Q1 2026", adset: "Zájemci nemovitosti CZ", format: "Carousel", placement: "Facebook Feed", spend: 1800, impressions: 29000, reach: 21000, clicks: 145, link_clicks: 120, ctr: 0.5, cpc: 12.4, cpm: 62, roas: 1.1, cpr: 900, cvr: 0.8, cost_per_lead: 750, results: 2, leads: 2, purchases: 0, frequency: 1.4, thruplay: 0, video_p25: 0, video_p50: 0, video_p75: 0, video_p100: 0 },
@@ -86,7 +86,11 @@ const ALL_METRICS = [
   { key: "roas",          label: "ROAS",         fmt: v => v?.toFixed(1) + "×", group: "Výkonnost" },
   { key: "leads",         label: "Leads",        fmt: v => v, group: "Výkonnost" },
   { key: "purchases",     label: "Nákupy",       fmt: v => v, group: "Výkonnost" },
-  { key: "cost_per_lead", label: "CPL",          fmt: v => v?.toFixed(0) + " Kč", group: "Výkonnost" },
+  { key: "lead_formular",  label: "Lead – formulář", fmt: v => v, group: "Zdroj leadů" },
+  { key: "lead_manychat",  label: "Lead – ManyChat", fmt: v => v, group: "Zdroj leadů" },
+  { key: "lead_telefon",   label: "Lead – telefon",  fmt: v => v, group: "Zdroj leadů" },
+  { key: "lead_fbform",    label: "Lead – FB Form",  fmt: v => v, group: "Zdroj leadů" },
+  { key: "lead_messenger", label: "Lead – Messenger", fmt: v => v, group: "Zdroj leadů" },
   { key: "impressions",   label: "Impressions",  fmt: v => v?.toLocaleString("cs"), group: "Dosah" },
   { key: "reach",         label: "Dosah",        fmt: v => v?.toLocaleString("cs"), group: "Dosah" },
   { key: "frequency",     label: "Frequency",    fmt: v => v?.toFixed(1) + "×", group: "Dosah" },
@@ -95,7 +99,7 @@ const ALL_METRICS = [
   { key: "ctr",           label: "CTR",          fmt: v => v?.toFixed(2) + "%", group: "Engagement" },
   { key: "cpc",           label: "CPC",          fmt: v => v?.toFixed(0) + " Kč", group: "Engagement" },
   { key: "cpm",           label: "CPM",          fmt: v => v?.toFixed(0) + " Kč", group: "Engagement" },
-  { key: "cvr",           label: "CVR",          fmt: v => v?.toFixed(1) + "%", group: "Engagement" },
+  { key: "cvr",           label: "Míra konverze", fmt: v => v?.toFixed(1) + "%", group: "Engagement" },
   { key: "thruplay",      label: "ThruPlays",    fmt: v => v?.toLocaleString("cs"), group: "Video" },
   { key: "video_p25",     label: "25% dohráno",  fmt: v => v?.toLocaleString("cs"), group: "Video" },
   { key: "video_p50",     label: "50% dohráno",  fmt: v => v?.toLocaleString("cs"), group: "Video" },
@@ -144,19 +148,17 @@ function IconLink({ href, icon, color, bg, label }) {
   );
 }
 
-function MetricGroup({ title, metrics, ad, allAds }) {
+function MetricGroup({ title, metrics, ad }) {
   return (
     <div>
-      <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-secondary)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
+      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.08em" }}>{title}</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 6 }}>
         {metrics.map(m => {
           const val = ad[m.key];
-          const good = isGood(m.key, val, allAds);
-          const bad = isBad(m.key, val, allAds);
           return (
-            <div key={m.key} style={{ background: good ? "#EAF3DE" : bad ? "#FCEBEB" : "var(--color-background-secondary)", borderRadius: 8, padding: "8px 10px" }}>
-              <div style={{ fontSize: 10, fontWeight: 500, color: good ? "#3B6D11" : bad ? "#A32D2D" : "var(--color-text-secondary)", marginBottom: 2 }}>{m.label}</div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: good ? "#27500A" : bad ? "#791F1F" : "var(--color-text-primary)" }}>{val != null ? m.fmt(val) : "–"}</div>
+            <div key={m.key} style={{ background: "var(--color-background-primary)", border: "0.5px solid var(--color-border-tertiary)", borderRadius: 8, padding: "8px 12px" }}>
+              <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginBottom: 3 }}>{m.label}</div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: "var(--color-text-primary)" }}>{val != null ? m.fmt(val) : "–"}</div>
             </div>
           );
         })}
@@ -275,7 +277,7 @@ function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutO
   const parsed = parseName(ad.name);
   const metaLink = getMetaAdLink(ad.id);
   const driveLink = getDriveSearchLink(ad.name);
-  const groups = ["Výkonnost", "Dosah", "Engagement", "Video"];
+  const groups = ["Výkonnost", "Zdroj leadů", "Dosah", "Engagement", "Video"];
 
   return (
     <div id={"row-" + ad.id} style={{ borderBottom: "1px solid var(--color-border-tertiary)" }}>
@@ -339,7 +341,7 @@ function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutO
       </div>
 
       {open && (
-        <div style={{ padding: "0 16px 20px", display: "flex", flexDirection: "column", gap: 16, background: "var(--color-background-secondary)", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+        <div style={{ padding: "0 18px 20px", display: "flex", flexDirection: "column", gap: 16, background: "var(--color-background-primary)", borderTop: "1px solid var(--color-border-tertiary)" }}>
           {/* Zavřít */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12 }}>
             <div style={{ display: "flex", gap: 12, fontSize: 12, color: "var(--color-text-secondary)", flexWrap: "wrap" }}>
@@ -352,12 +354,45 @@ function DetailRow({ ad, allAds, expandedId, setExpandedId, skalovatDo, vypnoutO
             </button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>Zelená = nad průměrem účtu · Červená = pod průměrem</div>
+            
             {groups.map(g => {
+              if (g === "Zdroj leadů") {
+                const leadKeys = [
+                  { key: "lead_formular",  label: "Formulář na webu" },
+                  { key: "lead_manychat",  label: "ManyChat" },
+                  { key: "lead_telefon",   label: "Klik na telefon" },
+                  { key: "lead_fbform",    label: "FB Lead Form" },
+                  { key: "lead_messenger", label: "Messenger" },
+                ];
+                const total = leadKeys.reduce((s, l) => s + (ad[l.key] || 0), 0);
+                if (!total) return null;
+                return (
+                  <div key={g}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.08em" }}>Zdroj leadů <span style={{ fontWeight: 400, textTransform: "none" }}>– celkem {total}</span></div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                      {leadKeys.map(l => {
+                        const val = ad[l.key] || 0;
+                        const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+                        if (!val) return null;
+                        return (
+                          <div key={l.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <div style={{ fontSize: 12, color: "var(--color-text-secondary)", width: 140, flexShrink: 0 }}>{l.label}</div>
+                            <div style={{ flex: 1, background: "var(--color-border-tertiary)", borderRadius: 4, height: 6, overflow: "hidden" }}>
+                              <div style={{ width: pct + "%", background: "#7F77DD", height: "100%", borderRadius: 4 }} />
+                            </div>
+                            <div style={{ fontSize: 12, fontWeight: 600, width: 24, textAlign: "right" }}>{val}</div>
+                            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", width: 34 }}>{pct}%</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
               const gMetrics = ALL_METRICS.filter(m => m.group === g);
               const hasData = gMetrics.some(m => ad[m.key] != null && ad[m.key] > 0);
               if (!hasData) return null;
-              return <MetricGroup key={g} title={g} metrics={gMetrics} ad={ad} allAds={allAds} />;
+              return <MetricGroup key={g} title={g} metrics={gMetrics} ad={ad} />;
             })}
           </div>
           <div style={{ borderTop: "0.5px solid var(--color-border-tertiary)", paddingTop: 14 }}>
@@ -575,7 +610,7 @@ export default function App() {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514", max_tokens: 2000,
-          messages: [{ role: "user", content: `Načti všechny aktivní a pozastavené reklamy z Meta ad účtu ${ACCOUNT_ID} za posledních 90 dní. Pro každou reklamu vrať JSON pole s poli: id, name, status, start_date, campaign, adset, format, placement, spend, impressions, reach, clicks, link_clicks, ctr, cpc, cpm, roas, cpr, cvr, cost_per_lead, results, leads, purchases, frequency, thruplay, video_p25, video_p50, video_p75, video_p100. Vrať pouze JSON bez komentářů. Pokud nemáš přístup vrať {"error":"no_access"}.` }],
+          messages: [{ role: "user", content: `Načti všechny aktivní a pozastavené reklamy z Meta ad účtu ${ACCOUNT_ID} za posledních 90 dní. Pro každou reklamu vrať JSON pole s poli: id, name, status, start_date, campaign, adset, format, placement, spend, impressions, reach, clicks, link_clicks, ctr, cpc, cpm, roas, cpr, cvr, results, leads, purchases, frequency, thruplay, video_p25, video_p50, video_p75, video_p100, lead_formular (actions:offsite_conversion.fb_pixel_lead), lead_manychat (actions:onsite_conversion.messaging_conversation_started_7d), lead_telefon (actions:click_to_call), lead_fbform (actions:leadgen_grouped), lead_messenger (actions:onsite_conversion.send_message). Vrať pouze JSON bez komentářů. Pokud nemáš přístup vrať {"error":"no_access"}.` }],
           mcp_servers: [{ type: "url", url: "https://mcp.facebook.com/ads", name: "meta" }],
         }),
       });
