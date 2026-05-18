@@ -179,8 +179,8 @@ function AIAnalysis({ ad, allAds, skalovatDo = 300, vypnoutOd = 450 }) {
     const avgCtr = avg(allAds, "ctr").toFixed(2);
     const avgRoas = avg(allAds, "roas").toFixed(1);
     const kreativaInfo = parsed
-      ? `Typ: ${parsed.typ}, Firma: ${parsed.firma}, Obsah/téma: "${parsed.obsah}"${parsed.poznamka ? `, Poznámka: ${parsed.poznamka}` : ""}, Datum: ${parsed.mesic}/${parsed.rok}`
-      : `Název (starý formát): ${ad.name}`;
+      ? "Typ: " + parsed.typ + ", Firma: " + parsed.firma + ", Obsah: " + parsed.obsah + (parsed.poznamka ? ", Poznamka: " + parsed.poznamka : "") + ", Datum: " + parsed.mesic + "/" + parsed.rok
+      : "Nazev: " + ad.name;
 
     const prompt = `Jsi expert na Meta Ads pro firmu FairShare (podíly na nemovitostech, spoluvlastnictví). Vyhodnoť tuto kreativu.
 
@@ -638,7 +638,8 @@ export default function App() {
   );
 
   return (
-    <div style={{ fontFamily: "var(--font-sans)", color: "var(--color-text-primary)" }}>
+    <div style={{ fontFamily: "var(--font-sans)", color: "var(--color-text-primary)", minHeight: "100vh", background: "var(--color-background-secondary)" }}>
+      <div style={{ maxWidth: 1600, margin: "0 auto", background: "var(--color-background-primary)", minHeight: "100vh", boxShadow: "0 0 40px rgba(0,0,0,0.06)" }}>
       <h2 className="sr-only">FairShare Meta Ads – vyhodnocení kreativ</h2>
       <div style={{ padding: "18px 18px 0" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
@@ -776,6 +777,7 @@ export default function App() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
